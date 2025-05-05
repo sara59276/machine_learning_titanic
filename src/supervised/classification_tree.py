@@ -16,12 +16,23 @@ clf = clf.fit(X_train,y_train)
 
 # predictions
 y_pred = clf.predict(X_test)
+y_proba = clf.predict_proba(X_test)[:, 1]  # probabilities for class 1 (survivors)
 
 # metrics
-print("Precision:", metrics.classification_report(y_test, y_pred))
+print("=== Classification Report ===")
+print(metrics.classification_report(y_test, y_pred))
+print("__________")
+
 print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Recall:")
-print("F1 score:")
+print("Precision:", metrics.precision_score(y_test, y_pred))
+print("Recall:", metrics.recall_score(y_test, y_pred))
+print("F1 Score:", metrics.f1_score(y_test, y_pred))
+print("__________")
+
+print("Log Loss (Entropy):", metrics.log_loss(y_test, y_proba)) # cf. ISLP textbook page 356
+print("__________")
+
+print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
 
 # plot
 plt.figure(figsize=(12,8))
