@@ -17,19 +17,19 @@ from constants.constants import PROJECT_ROOT
 # Fare
 # Embarked : One-Hot Encoding
 
-### dropped variables ###
+### dropped variables ### # TODO : justifier
 # Name
 # Ticket
 # Cabin
 
 def process_titanic():
-    # load data
+    # load resource
     titanic_df = pd.read_csv(
-        PROJECT_ROOT + '/data/titanic/train.csv',
+        PROJECT_ROOT + '/resource/titanic/train.csv',
         converters={'Sex': lambda x: 1 if x == 'female' else 0},
     )
 
-    # handle missing data
+    # handle missing resource
     titanic_df["Age"] = titanic_df["Age"].fillna(titanic_df["Age"].median())  # TODO change to linear regression
 
     # handle categorial features
@@ -42,14 +42,14 @@ def process_titanic():
 def load_titanic():
     titanic_df = process_titanic()
 
-    # split data into features (VI, X) and target (VD, y)
+    # split resource into features (VI, X) and target (VD, y)
     feature_cols = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked_S", "Embarked_C", "Embarked_Q"]
     X = titanic_df[feature_cols]
     y = titanic_df["Survived"].astype(int)
 
     return X, y
 
-def load_titanic_train_test(test_size: float):
+def load_titanic_split_sets(test_size: float):
     X, y = load_titanic()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
     return X_train, X_test, y_train, y_test

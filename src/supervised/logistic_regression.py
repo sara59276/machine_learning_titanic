@@ -5,7 +5,7 @@ from constants.constants import PROJECT_ROOT
 
 
 train_df = pd.read_csv(
-    PROJECT_ROOT + '/data/titanic/train.csv',
+    PROJECT_ROOT + '/resource/titanic/train.csv',
     converters={'Sex': lambda x: 1 if x == 'female' else 0},
 )
 train_df["Age"] = train_df["Age"].fillna(train_df["Age"].median()) # TODO justifying this filling method
@@ -25,7 +25,7 @@ glm = sm.GLM(
 results = glm.fit()
 print(results.summary())
 
-# TODO séparer data en 2-3 parties (train + test) + validate?
+# TODO séparer resource en 2-3 parties (train + test) + validate?
 
 results.save(fname="logistic_regression_model")
 
