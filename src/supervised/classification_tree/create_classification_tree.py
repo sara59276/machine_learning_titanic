@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from joblib import dump
-from src.data_processing.process_titanic_data import get_training_data_split
+from src.data_processing.input import get_training_data_split
 
-X_train, X_test, y_train, y_test = get_training_data_split(test_size=0.3)
+X_train, X_test, y_train, y_test, ids = get_training_data_split(test_size=0.3)
 
 # create model
 model = DecisionTreeClassifier()
@@ -37,9 +37,9 @@ print("__________")
 print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
 
 # plot
-plt.figure(figsize=(12,8))
-plot_tree(model, filled=True, feature_names=X_train.columns, class_names=True)
-plt.show()
+# plt.figure(figsize=(12,8))
+# plot_tree(model, filled=True, feature_names=X_train.columns, class_names=True)
+# plt.show()
 
 
 

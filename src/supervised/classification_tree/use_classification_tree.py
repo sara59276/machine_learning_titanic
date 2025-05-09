@@ -1,16 +1,23 @@
-import pandas as pd
 from joblib import load
 
-from src.data_processing.process_titanic_data import get_evaluation_data
+from src.data_processing.input import get_evaluation_data
+from src.data_processing.output import create_csv
 
-trained_model = load("classification_tree.joblib")
+try:
+    trained_model = load("classification_tree.joblib")
 
-X, ids = get_evaluation_data()
-y_pred = trained_model.predict(X)
+    X, ids = get_evaluation_data()
+    y_pred = trained_model.predict(X)
 
-output_df = pd.DataFrame({
-    "PassengerId": ids,
-    "Survived": y_pred
-})
+    create_csv(
+        filename="classification_tree.csv",
+        passenger_id=ids,
+        survived=y_pred,
+    )
 
-output_df.to_csv("classification_tree.csv", index=False)
+except FileNotFoundError:
+    print("The model hasn't been created yet. Please run the create file first.")
+
+
+
+

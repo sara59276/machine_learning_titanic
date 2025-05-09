@@ -3,10 +3,6 @@ from sklearn.model_selection import train_test_split
 
 from constants.constants import PROJECT_ROOT
 
-### dropped variables ### # TODO : justifier
-# Name
-# Ticket
-# Cabin
 
 ALL_COLUMNS = [
     "PassengerId", "Pclass", "Name", "Sex", "Age", "SibSp", "Parch", "Ticket", "Fare",
@@ -19,12 +15,10 @@ FEATURE_COLUMNS = [
 TARGET_COLUMN = [
     "Survived",
 ]
-DROPPED_COLUMNS = [
+DROPPED_FEATURES_COLUMNS = [
     "PassengerId", "Name", "Ticket", "Cabin",
 ]
-ID_COLUMN = [
-    "PassengerId",
-]
+ID_COLUMN = "PassengerId"
 
 TRAIN_DATA_PATH = f"{PROJECT_ROOT}/resource/train.csv"
 EVAL_DATA_PATH = f"{PROJECT_ROOT}/resource/eval.csv"
@@ -54,18 +48,19 @@ def get_training_data():
     df = _process_data(df)
     X = df[FEATURE_COLUMNS]
     y = df[TARGET_COLUMN].astype(int)
-    return X, y
+    ids = df[ID_COLUMN]
+    return X, y, ids
 
 
 def get_training_data_split(test_size: float):
-    X, y = get_training_data()
+    X, y, ids = get_training_data()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
-    return X_train, X_test, y_train, y_test
+    return X_train, X_test, y_train, y_test, ids
 
 
 def get_evaluation_data():
     df = _load_raw_data(EVAL_DATA_PATH)
     df = _process_data(df)
     X = df[FEATURE_COLUMNS]
-    ids = df["PassengerId"]
+    ids = df[ID_COLUMN]
     return X, ids
