@@ -3,53 +3,49 @@ from sklearn.model_selection import train_test_split
 
 from constants.constants import PROJECT_ROOT
 
-# PassengerId
-
-### y, target, Variable dépendante ###
-# Survived
-
-### X, features, Variables indépendantes ###
-# Pclass
-# Sex : converted male to 0 and female to 1
-# Age
-# SibSp
-# Parch
-# Fare
-# Embarked : One-Hot Encoding
-
 ### dropped variables ### # TODO : justifier
 # Name
 # Ticket
 # Cabin
 
-def process_titanic():
-    # load resource
-    titanic_df = pd.read_csv(
-        PROJECT_ROOT + '/resource/titanic/train.csv',
+FEATURE_COLUMNS = [
+    "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare",
+    "Embarked_S", "Embarked_C", "Embarked_Q",
+]
+
+TRAIN_DATA_PATH = f"{PROJECT_ROOT}/resource/train.csv"
+EVAL_DATA_PATH = f"{PROJECT_ROOT}/resource/eval.csv"
+
+def _load_raw_data(path: str):
+    return pd.read_csv(
+        TRAIN_DATA_PATH,
         converters={'Sex': lambda x: 1 if x == 'female' else 0},
     )
 
-    # handle missing resource
-    titanic_df["Age"] = titanic_df["Age"].fillna(titanic_df["Age"].median())  # TODO change to linear regression
+def _process_data(df: pd.DataFrame):
+    # fill missing ages with median
+    df["Age"] = df["Age"].fillna(df["Age"].median())  # TODO change to regression-based imputation
 
-    # handle categorial features
-    titanic_df['Embarked_S'] = (titanic_df['Embarked'] == 'S').astype(int)
-    titanic_df['Embarked_C'] = (titanic_df['Embarked'] == 'C').astype(int)
-    titanic_df['Embarked_Q'] = (titanic_df['Embarked'] == 'Q').astype(int)
+    # one-hot encoding for "Embarked" feature
+    df['Embarked_S'] = (df['Embarked'] == 'S').astype(int)
+    df['Embarked_C'] = (df['Embarked'] == 'C').astype(int)
+    df['Embarked_Q'] = (df['Embarked'] == 'Q').astype(int)
 
-    return titanic_df
+    return df
 
-def load_titanic():
-    titanic_df = process_titanic()
-
-    # split resource into features (VI, X) and target (VD, y)
-    feature_cols = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked_S", "Embarked_C", "Embarked_Q"]
-    X = titanic_df[feature_cols]
-    y = titanic_df["Survived"].astype(int)
-
+def get_training_data():
+    df = _load_raw_data(TRAIN_DATA_PATH)
+    df = _process_data(df)
+    X = df[FEATURE_COLUMNS]
+    y = df["Survived"].astype(int)
     return X, y
 
-def load_titanic_split_sets(test_size: float):
-    X, y = load_titanic()
+def get_training_data_split(test_size: float):
+    X, y = get_training_data()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
     return X_train, X_test, y_train, y_test
+
+def get_evaluation_data():
+    df = _load_raw_data(EVAL_DATA_PATH)
+    df = _process_data(df)
+    return df[FEATURE_COLUMNS]
