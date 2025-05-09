@@ -18,7 +18,7 @@ y_proba = model.predict_proba(X_test)[:, 1]  # y_proba = probability for class 1
 
 # save model
 timestamp = datetime.now().strftime("%Y%m%d_%H%M")
-dump(model, f"classification_tree_{timestamp}.joblib")
+dump(model, f"classification_tree.joblib")
 
 # metrics
 print("=== Classification Report ===")

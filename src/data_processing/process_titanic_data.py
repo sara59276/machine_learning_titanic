@@ -18,7 +18,7 @@ EVAL_DATA_PATH = f"{PROJECT_ROOT}/resource/eval.csv"
 
 def _load_raw_data(path: str):
     return pd.read_csv(
-        TRAIN_DATA_PATH,
+        path,
         converters={'Sex': lambda x: 1 if x == 'female' else 0},
     )
 
