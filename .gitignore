@@ -1,5 +1,4 @@
 /src/isl
-.idea/
 *.joblib
 
 src/test*.py
