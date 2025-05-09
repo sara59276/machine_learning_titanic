@@ -1,11 +1,16 @@
+import pandas as pd
 from joblib import load
 
 from src.data_processing.process_titanic_data import get_evaluation_data
 
-model = load("classification_tree.joblib")
+trained_model = load("classification_tree.joblib")
 
-X = get_evaluation_data()
-y_pred = model.predict(X)
-y_proba = model.predict_proba(X)[:, 1]
+X, ids = get_evaluation_data()
+y_pred = trained_model.predict(X)
 
-print(y_pred)
+output_df = pd.DataFrame({
+    "PassengerId": ids,
+    "Survived": y_pred
+})
+
+output_df.to_csv("classification_tree.csv", index=False)

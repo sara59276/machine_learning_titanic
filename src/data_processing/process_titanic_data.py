@@ -8,19 +8,34 @@ from constants.constants import PROJECT_ROOT
 # Ticket
 # Cabin
 
+ALL_COLUMNS = [
+    "PassengerId", "Pclass", "Name", "Sex", "Age", "SibSp", "Parch", "Ticket", "Fare",
+    "Cabin", "Embarked_S", "Embarked_C", "Embarked_Q",
+]
 FEATURE_COLUMNS = [
     "Pclass", "Sex", "Age", "SibSp", "Parch", "Fare",
     "Embarked_S", "Embarked_C", "Embarked_Q",
 ]
+TARGET_COLUMN = [
+    "Survived",
+]
+DROPPED_COLUMNS = [
+    "PassengerId", "Name", "Ticket", "Cabin",
+]
+ID_COLUMN = [
+    "PassengerId",
+]
 
 TRAIN_DATA_PATH = f"{PROJECT_ROOT}/resource/train.csv"
 EVAL_DATA_PATH = f"{PROJECT_ROOT}/resource/eval.csv"
+
 
 def _load_raw_data(path: str):
     return pd.read_csv(
         path,
         converters={'Sex': lambda x: 1 if x == 'female' else 0},
     )
+
 
 def _process_data(df: pd.DataFrame):
     # fill missing ages with median
@@ -33,19 +48,24 @@ def _process_data(df: pd.DataFrame):
 
     return df
 
+
 def get_training_data():
     df = _load_raw_data(TRAIN_DATA_PATH)
     df = _process_data(df)
     X = df[FEATURE_COLUMNS]
-    y = df["Survived"].astype(int)
+    y = df[TARGET_COLUMN].astype(int)
     return X, y
+
 
 def get_training_data_split(test_size: float):
     X, y = get_training_data()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
     return X_train, X_test, y_train, y_test
 
+
 def get_evaluation_data():
     df = _load_raw_data(EVAL_DATA_PATH)
     df = _process_data(df)
-    return df[FEATURE_COLUMNS]
+    X = df[FEATURE_COLUMNS]
+    ids = df["PassengerId"]
+    return X, ids
