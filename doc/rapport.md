@@ -5,13 +5,13 @@ Cédric THOMAS - 58446
 
 ## Métriques de performance et qualité des modèles
 
-### Supervised
+### Modèles supervisés
 
 #### Arbre de décision (Classification tree)
 
 #### Régression logistique
 
-### Unsupervised
+### Modèles non supervisés
 
 #### K-means
 
