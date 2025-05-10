@@ -1,10 +1,28 @@
 import pandas as pd
+from joblib import load
+
+from src.data_processing.input import get_evaluation_data
+
+EXPECTED_SIZE = 418
 
 
-def create_csv(filename: str, passenger_id, survived):
-    output_df = pd.DataFrame({
-        "PassengerId": passenger_id,
-        "Survived": survived,
+def create_predictions_file(model_name, passenger_ids, predictions):
+    if (len(passenger_ids) != EXPECTED_SIZE
+            or len(predictions) != EXPECTED_SIZE):
+        raise Exception(f"Number of lines in both columns must be strictly equal to {EXPECTED_SIZE}.\n"
+                        f"\tPassengerId: {len(passenger_ids)}\n"
+                        f"\tSurvived: {len(predictions)}")
+
+    df = pd.DataFrame({
+        "PassengerId": passenger_ids,
+        "Survived": predictions,
     })
 
-    output_df.to_csv("classification_tree.csv", index=False)
+    df.to_csv(f"{model_name}_predictions.csv", index=False)
+
+
+def create_accuracy_file(model_name: str, accuracy: float):
+    with open(f"{model_name}_accuracy.txt", "w") as f:
+        f.write(str(accuracy))
+
+

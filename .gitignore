@@ -1,5 +1,6 @@
 /src/isl
 *.joblib
+*_accuracy.txt
 
 src/test*.py
 
