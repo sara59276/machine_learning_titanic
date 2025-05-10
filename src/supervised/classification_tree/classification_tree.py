@@ -1,5 +1,5 @@
 from sklearn import metrics
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, log_loss
 from sklearn.tree import DecisionTreeClassifier
 from joblib import dump, load
 
@@ -9,7 +9,7 @@ from src.data_processing.output import create_accuracy_file, create_predictions_
 
 MODEL_NAME = Models.CLASSIFICATION_TREE.value
 
-X_train, X_test, y_train, y_test, _ = get_training_data_split(test_size=0.3, features_only=True)
+X_train, X_test, y_train, y_test, _ = get_training_data_split(test_size=0.3, selected_features_only=True)
 
 # create model
 model = DecisionTreeClassifier()
@@ -38,9 +38,9 @@ print("Accuracy:", accuracy)
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
-print("Log Loss (Entropy):", metrics.log_loss(y_test, y_proba)) # cf. ISLP textbook page 356
+print("Log Loss (Entropy):", log_loss(y_test, y_proba)) # cf. ISLP textbook page 356
 print()
-print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 def _load_model(model_name: str):
     try:

@@ -1,34 +1,58 @@
-import pandas as pd
 import statsmodels.api as sm
-from constants.constants import PROJECT_ROOT
+from joblib import dump, load
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+
+from constants.models import Models
+from src.data_processing.input import get_training_data_split, get_evaluation_data
+from src.data_processing.output import create_predictions_file, create_accuracy_file
 
 
+MODEL_NAME = Models.LOGISTIC_REGRESSION.value
 
-train_df = pd.read_csv(
-    PROJECT_ROOT + '/resource/titanic/train.csv',
-    converters={'Sex': lambda x: 1 if x == 'female' else 0},
+X_train, X_test, y_train, y_test, _ = get_training_data_split(test_size=0.3, selected_features_only=True)
+X_train = sm.add_constant(X_train) # adding an intercept # TODO : why important ?
+X_test = sm.add_constant(X_test)
+
+model = sm.GLM(
+    y_train,
+    X_train,
+    family=sm.families.Binomial(), # TODO justify binomial (target is binary)
 )
-train_df["Age"] = train_df["Age"].fillna(train_df["Age"].median()) # TODO justifying this filling method
-train_df['Embarked_S'] = (train_df['Embarked'] == 'S').astype(int)
-train_df['Embarked_C'] = (train_df['Embarked'] == 'C').astype(int)
-train_df['Embarked_Q'] = (train_df['Embarked'] == 'Q').astype(int)
+model = model.fit()
+print(model.summary())
 
-y = train_df["Survived"].astype(int)
-X = train_df[["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked_S", "Embarked_C", "Embarked_Q"]]
-X = sm.add_constant(X) # adding an intercept # TODO : why important ?
 
-glm = sm.GLM(
-    y,
-    X,
-    family=sm.families.Binomial(), # TODO justify binomial (VD is binary)
+y_pred = model.predict(X_test)
+y_pred = (y_pred > 0.5).astype(int) # pour rendre binaire (0 et 1)
+
+dump(model, f"{MODEL_NAME}_model.joblib")
+
+accuracy = accuracy_score(y_test, y_pred)
+accuracy = round(accuracy, 4)
+create_accuracy_file(
+    model_name=MODEL_NAME,
+    accuracy=accuracy,
 )
-results = glm.fit()
-print(results.summary())
 
-# TODO séparer resource en 2-3 parties (train + test) + validate?
+print("Accuracy:", accuracy)
+print("Precision:", precision_score(y_test, y_pred))
+print("Recall:", recall_score(y_test, y_pred))
+print("F1 Score:", f1_score(y_test, y_pred))
 
-results.save(fname="logistic_regression_model")
+def _load_model(model_name: str):
+    try:
+        return load(f"{model_name}_model.joblib")
+    except FileNotFoundError:
+        print(f"The model hasn't been created yet. Please run the create_{model_name}.py file first.")
 
-probs = results.predict()
+trained_model = _load_model(MODEL_NAME)
+X, ids = get_evaluation_data(selected_features_only=True)
+X = sm.add_constant(X)
+y_pred = trained_model.predict(X)
+y_pred = (y_pred > 0.5).astype(int) # pour rendre binaire (0 et 1)
 
-
+create_predictions_file(
+    model_name=MODEL_NAME,
+    passenger_ids=ids,
+    predictions=y_pred,
+)

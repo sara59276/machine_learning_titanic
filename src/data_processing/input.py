@@ -55,8 +55,8 @@ def get_training_data(selected_features_only: bool = False):
     return X, y, ids
 
 
-def get_training_data_split(test_size: float, features_only: bool = False):
-    X, y, ids = get_training_data(selected_features_only=features_only)
+def get_training_data_split(test_size: float, selected_features_only: bool = False):
+    X, y, ids = get_training_data(selected_features_only=selected_features_only)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=1)
     return X_train, X_test, y_train, y_test, ids
 
