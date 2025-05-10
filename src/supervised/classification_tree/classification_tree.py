@@ -1,11 +1,10 @@
-from sklearn import metrics
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, log_loss
-from sklearn.tree import DecisionTreeClassifier
 from joblib import dump, load
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.tree import DecisionTreeClassifier
 
 from constants.models import Models
 from src.data_processing.input import get_training_data_split, get_evaluation_data
-from src.data_processing.output import create_accuracy_file, create_predictions_file
+from src.data_processing.output import create_predictions_file
 
 MODEL_NAME = Models.CLASSIFICATION_TREE.value
 
@@ -23,24 +22,19 @@ y_proba = model.predict_proba(X_test)[:, 1]  # y_proba = probability to be survi
 dump(model, f"{MODEL_NAME}_model.joblib")
 
 # metrics
-print("=== Classification Report ===")
-print(metrics.classification_report(y_test, y_pred))
-print()
-
-accuracy = accuracy_score(y_test, y_pred)
-accuracy = round(accuracy, 4)
-create_accuracy_file(
-    model_name=MODEL_NAME,
-    accuracy=accuracy,
-)
+accuracy = round(accuracy_score(y_test, y_pred), 4)
+precision = round(precision_score(y_test, y_pred), 4)
+recall = round(recall_score(y_test, y_pred), 4)
+f1 = round(f1_score(y_test, y_pred), 4)
 
 print("Accuracy:", accuracy)
-print("Precision:", precision_score(y_test, y_pred))
-print("Recall:", recall_score(y_test, y_pred))
-print("F1 Score:", f1_score(y_test, y_pred))
-print("Log Loss (Entropy):", log_loss(y_test, y_proba)) # cf. ISLP textbook page 356
-print()
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("Precision:", precision)
+print("Recall:", recall_score)
+print("F1:", f1)
+
+# print(classification_report(y_test, y_pred))
+# print("Log Loss (Entropy):", log_loss(y_test, y_proba)) # cf. ISLP textbook page 356
+# print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 def _load_model(model_name: str):
     try:

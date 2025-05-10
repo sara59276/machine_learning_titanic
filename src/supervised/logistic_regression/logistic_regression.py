@@ -4,8 +4,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 
 from constants.models import Models
 from src.data_processing.input import get_training_data_split, get_evaluation_data
-from src.data_processing.output import create_predictions_file, create_accuracy_file
-
+from src.data_processing.output import create_predictions_file
 
 MODEL_NAME = Models.LOGISTIC_REGRESSION.value
 
@@ -19,7 +18,6 @@ model = sm.GLM(
     family=sm.families.Binomial(), # TODO justify binomial (target is binary)
 )
 model = model.fit()
-print(model.summary())
 
 
 y_pred = model.predict(X_test)
@@ -27,17 +25,17 @@ y_pred = (y_pred > 0.5).astype(int) # pour rendre binaire (0 et 1)
 
 dump(model, f"{MODEL_NAME}_model.joblib")
 
-accuracy = accuracy_score(y_test, y_pred)
-accuracy = round(accuracy, 4)
-create_accuracy_file(
-    model_name=MODEL_NAME,
-    accuracy=accuracy,
-)
+accuracy = round(accuracy_score(y_test, y_pred), 4)
+precision = round(precision_score(y_test, y_pred), 4)
+recall = round(recall_score(y_test, y_pred), 4)
+f1 = round(f1_score(y_test, y_pred), 4)
 
 print("Accuracy:", accuracy)
-print("Precision:", precision_score(y_test, y_pred))
-print("Recall:", recall_score(y_test, y_pred))
-print("F1 Score:", f1_score(y_test, y_pred))
+print("Precision:", precision)
+print("Recall:", recall_score)
+print("F1:", f1)
+# print(model.summary())
+
 
 def _load_model(model_name: str):
     try:

@@ -1,7 +1,4 @@
 import pandas as pd
-from joblib import load
-
-from src.data_processing.input import get_evaluation_data
 
 EXPECTED_SIZE = 418
 
@@ -19,10 +16,3 @@ def create_predictions_file(model_name, passenger_ids, predictions):
     })
 
     df.to_csv(f"{model_name}_predictions.csv", index=False)
-
-
-def create_accuracy_file(model_name: str, accuracy: float):
-    with open(f"{model_name}_accuracy.txt", "w") as f:
-        f.write(str(accuracy))
-
-

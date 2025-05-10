@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 
 from constants.constants import PROJECT_ROOT
 
-
 TRAIN_DATA_PATH = f"{PROJECT_ROOT}/resource/train.csv"
 EVAL_DATA_PATH = f"{PROJECT_ROOT}/resource/eval.csv"
 
